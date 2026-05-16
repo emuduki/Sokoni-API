@@ -1,12 +1,19 @@
 import { PrismaClient } from '@prisma/client';
+import { hashPassword } from '../src/shared/auth/password.js';
 
 const prisma = new PrismaClient();
 
 const run = async () => {
+  const passwordHash = await hashPassword('ChangeMe123!');
+
   await prisma.user.upsert({
     where: { email: 'admin@sokoni.local' },
-    update: {},
-    create: { email: 'admin@sokoni.local' },
+    update: { passwordHash, role: 'ADMIN' },
+    create: {
+      email: 'admin@sokoni.local',
+      passwordHash,
+      role: 'ADMIN',
+    },
   });
 };
 
